@@ -1,0 +1,16 @@
+{
+    "$schema": "https://json.schemastore.org/block.json",
+    "apiVersion": 2,
+    "title": "Custom Fields Block",
+    "name": "atareao/custom-fields-block",
+    "category": "embed",
+    "icon": "universal-access-alt",
+    "keywords": ["atareao", "custom"],
+    "version": "1.0.0",
+    "textdomain": "atareao-custom-fields-block",
+    "example": {},
+    "editorScript": "file:./block.js",
+    "style": "file:./style.css"
+}
+
+
