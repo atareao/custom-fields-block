@@ -30,32 +30,43 @@
         ),
     );
 
-    var blockStyle = {
-        backgroundColor: '#900',
-        color: '#fff',
-        padding: '20px',
-    };
+    const fields = [
+        {
+            key: "cfb_nacimiento",
+            description: "Nacimiento",
+            type: "string"
+         },
+        {
+            key: "cfb_llegada",
+            description: "Llegada al refugio",
+            type: "date"
+        },
+        {
+            key: "cfb_sexo",
+            description: "Sexo",
+            type: "string"
+         },
+        {
+            key: "cfb_tamano",
+            description: "Tamaño",
+            type: "string"
+         },
+        {
+            key: "cfb_tamano_adulto",
+            description: "Tamaño adulto",
+            type: "number"
+         },
+    ];
 
     blocks.registerBlockType( 'atareao/custom-fields-block', {
-        title: __("Atareao Meta Block"),
+        title: __("Custom Fields Block"),
         icon: blockIcon,
         category: "embed",
         attributes: {
-            nacimiento: {
+            "cfb_nacimiento": {
                 type: "string",
+                description: "Nacimiento",
             },
-            llegada: {
-                type: "string"
-            },
-            sexo: {
-                type: "string"
-            },
-            tamano: {
-                type: "string"
-            },
-            tamano_grande: {
-                type: "string"
-            }
         },
         edit: function(props) {
             let blockProps = wp.blockEditor.useBlockProps();
@@ -64,9 +75,6 @@
             );
             const [ meta, setMeta ] = wp.coreData.useEntityProp( 'postType', postType, 'meta' );
 
-            function update_key(key, event){
-                props.setAtrributes({key: event.target.value});
-            }
             let questions = [];
             questions.push(
                 el(
@@ -75,29 +83,30 @@
                             className: "components-placeholder__label"
                         },
                         blockIcon,
-                        "Simple meta"
+                        "Custom Fields Block"
                     )
             );
-            for (const akey in meta) {
-                if (meta.hasOwnProperty(akey)) {
+            for (const index in fields) {
+                if (meta.hasOwnProperty(fields[index].key)) {
                     questions.push(
                             el(
                                 "div",
                                 {
-                                    for: akey,
+                                    for: fields[index].key,
                                     className: "components-placeholder__instructions"
                                 },
-                                `${akey}: `
+                                `${fields[index].description}: `
                             ));
                     questions.push(
                             el(
                                 "input",
                                 {
-                                    id: akey,
-                                    type: "text",
-                                    value: meta[akey],
+                                    id: fields[index].key,
+                                    type: fields[index].type,
+                                    value: meta[fields[index].key],
                                     onChange: (event) => {
-                                        setMeta({...meta, [akey]: event.target.value});
+                                        setMeta({...meta, [fields[index].key]: event.target.value});
+                                        props.setAttributes({[fields[index.key]]: event.target.value});
                                     }
                                 }
                             ));
@@ -110,162 +119,9 @@
                 el(
                     "div",
                     {className: "components-placeholder wp-block-embed is-large"},
-                    questions
+                    questions,
                 ),
             );
-        },
-        save: function(props) {
-            let blockProps = wp.blockEditor.useBlockProps.save();
-            return el(
-                "div",
-                {className: "block-editor-block-list__block wp-block wp-block-embed"},
-                el(
-                    "div",
-                    {class: "mimeta"},
-                    el(
-                        "label",
-                        {class: "atareao-custom-fields-block-label row"},
-                        el(
-                            "span",
-                            {class: "question"},
-                            props.attributes.question
-                        )
-                    ),
-                    el(
-                        "label",
-                        {class: "atareao-custom-fields-block-label row"},
-                        el(
-                            "span",
-                            {class: "help"},
-                            props.attributes.help
-                        )
-                    ),
-                    el(
-                        "div",
-                        {class: "row"},
-                        el(
-                            "label",
-                            {
-                                class: "atareao-custom-fields-block-label",
-                                id: "atareao-custom-fields-block-label-correo"
-                            },
-                            "Correo: "
-                        ),
-                        el(
-                            "input",
-                            {
-                                class: "atareao-custom-fields-block-input",
-                                id: "atareao-custom-fields-block-input-email",
-                                type: "text",
-                                placeholder: "email"
-                            }
-                        ),
-                    ),
-                    el(
-                        "textarea",
-                        {
-                            class: "atareao-custom-fields-block-textarea row",
-                            id: "atareao-custom-fields-block-textarea-answer",
-                            name: "answer",
-                            placeholder: "tu respuesta"
-                        }
-                    ),
-                    el(
-                        "div",
-                        {
-                            class: "atareao-custom-fields-block-div row"
-                        },
-                        el(
-                            "label",
-                            {
-                                class: "atareao-custom-fields-block-label row",
-                                id: "atareao-custom-fields-block-label-for-select-animal",
-                                for: "select-animal",
-                            },
-                            human_q()
-                        ),
-                    ),
-                    el(
-                        "div",
-                        {
-                            class: "atareao-custom-fields-block-div row",
-                        },
-                        human()
-                    ),
-                    el(
-                        "div",
-                        {
-                            class: "atareao-custom-fields-block-div row",
-                        },
-                        el(
-                            "button",
-                            {
-                                class: "atareao-custom-fields-block-button",
-                                id: "atareao-custom-fields-block-button-enviar",
-                            },
-                            "Enviar"
-                        )
-                    ),
-                    el(
-                        "div",
-                        {
-                            class: "atareao-custom-fields-block-div row"
-                        },
-                        el(
-                            "span",
-                            {
-                                class: "atareao-custom-fields-block-span",
-                                id: "atareao-custom-fields-block-span-resultado",
-                                style: "visibility:hidden"
-                            },
-                            "Resultado"
-                        )
-                    )
-                )
-            );
-        },
+        }
     } );
 }( window.wp.blocks, window.wp.i18n, window.wp.element, window.wp.blockEditor ) );
-
-function human_q(){
-    return [wp.element.createElement("label", {}, "¿Eres un ser humano?. Selecciona "),
-            wp.element.createElement(
-                "span",
-                {
-                    id: "random-animal",
-                    value: "option1"
-                },
-                "")];
-}
-
-function human(){
-    let q = [];
-    let animals = {option1: "\u{1F980}",
-                   option2: "\u{1F40D}",
-                   option3: "\u{1F427}",
-                   option4: "\u{1F404}",
-                   option5: "\u{1F416}",
-                   option6: "\u{1F40E}"
-    };
-    for(const [key, value] of Object.entries(animals)){
-        q.push(wp.element.createElement(
-            "input",
-            {
-                class: "atareao-custom-fields-block-input-for-selection",
-                type: "radio",
-                name: "animal",
-                value: key,
-                id: key
-            }
-        ));
-        q.push(wp.element.createElement(
-            "label",
-            {
-                class: "atareao-custom-fields-block-label-for-selection",
-                for: key
-            },
-            value
-        ));
-    }
-    return q;
-}
